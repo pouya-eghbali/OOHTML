@@ -133,4 +133,3 @@ C.getElementById('message').value = "HTML CONSTRUCTOR!!!"
 C.addAfterId('contents', Constructor().open('div').raw('OOHTML').single('br').close('div'))
 
 print(C.render())
-
