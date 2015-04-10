@@ -21,12 +21,12 @@ class ElementSingleton(object):
         self.id = id
         self.options = options
         
-    def addOptions(self, options, value):
+    def addOptions(self, options):
         for opt in options:
             if opt in self.options:
                 self.options[opt] += options[opt]
             else:
-                self.options[opt] = value
+                self.options[opt] = options[opt]
 
 class ElementEnd(object):
     def __init__(self, tag):
@@ -133,3 +133,4 @@ C.getElementById('message').value = "HTML CONSTRUCTOR!!!"
 C.addAfterId('contents', Constructor().open('div').raw('OOHTML').single('br').close('div'))
 
 print(C.render())
+
