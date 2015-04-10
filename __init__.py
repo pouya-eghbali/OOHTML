@@ -8,12 +8,12 @@ class ElementStart(object):
         self.id = id
         self.options = options
         
-    def addOptions(self, options, value):
+    def addOptions(self, options):
         for opt in options:
             if opt in self.options:
                 self.options[opt] += options[opt]
             else:
-                self.options[opt] = value
+                self.options[opt] = options[opt]
 
 class ElementSingleton(object):
     def __init__(self, tag, options = {}, id = None):
@@ -110,3 +110,27 @@ class Constructor(object):
         return output
 
 o,c,r,s = ElementStart, ElementEnd, ElementRaw, ElementSingleton
+
+C = Constructor()
+
+C.feed(o('html'),
+         o('head'),
+           o('script', {'type': ['text/javascript'], 'src':['script.js']}),
+           c('script'),
+           o('style', {'type': ['text/css'], 'src':['style.css']}),
+           c('style'),
+         c('head'),
+         o('body'),
+           o('div', {'class':['message']}),
+             r('Hello World!!!', 'message'),
+             s('img', {'alt': ['Hello'], 'src':['img.jpeg']}),
+           c('div'),
+           o('div', {'class':['message', 'floater']}, 'contents'), c('div'),
+         c('body'),
+       c('html'))
+
+C.getElementById('message').value = "HTML CONSTRUCTOR!!!"
+C.addAfterId('contents', Constructor().open('div').raw('OOHTML').single('br').close('div'))
+
+print(C.render())
+
