@@ -8,7 +8,7 @@ class ElementStart(object):
         self.id = id
         self.attributes = attributes
         
-    def addattributes(self, attributes):
+    def addAttributes(self, attributes):
         for opt in attributes:
             if opt in self.attributes:
                 self.attributes[opt] += attributes[opt]
@@ -21,7 +21,7 @@ class ElementSingleton(object):
         self.id = id
         self.attributes = attributes
         
-    def addattributes(self, attributes):
+    def addAttributes(self, attributes):
         for opt in attributes:
             if opt in self.attributes:
                 self.attributes[opt] += attributes[opt]
