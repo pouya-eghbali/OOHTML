@@ -3,30 +3,30 @@
 # Author: Pooya Eghbali - persian.writer@gmail.com #
 
 class ElementStart(object):
-    def __init__(self, tag, options = {}, id = None):
+    def __init__(self, tag, attributes = {}, id = None):
         self.tag = tag
         self.id = id
-        self.options = options
+        self.attributes = attributes
         
-    def addOptions(self, options):
-        for opt in options:
-            if opt in self.options:
-                self.options[opt] += options[opt]
+    def addattributes(self, attributes):
+        for opt in attributes:
+            if opt in self.attributes:
+                self.attributes[opt] += attributes[opt]
             else:
-                self.options[opt] = options[opt]
+                self.attributes[opt] = attributes[opt]
 
 class ElementSingleton(object):
-    def __init__(self, tag, options = {}, id = None):
+    def __init__(self, tag, attributes = {}, id = None):
         self.tag = tag
         self.id = id
-        self.options = options
+        self.attributes = attributes
         
-    def addOptions(self, options):
-        for opt in options:
-            if opt in self.options:
-                self.options[opt] += options[opt]
+    def addattributes(self, attributes):
+        for opt in attributes:
+            if opt in self.attributes:
+                self.attributes[opt] += attributes[opt]
             else:
-                self.options[opt] = options[opt]
+                self.attributes[opt] = attributes[opt]
 
 class ElementEnd(object):
     def __init__(self, tag):
@@ -41,8 +41,8 @@ class Constructor(object):
     def __init__(self):
         self.elements = []
         
-    def open(self, tag, options = {}, id = None):
-        self.elements += [ElementStart(tag, options, id)]
+    def open(self, tag, attributes = {}, id = None):
+        self.elements += [ElementStart(tag, attributes, id)]
         return self
         
     def close(self, tag):
@@ -52,8 +52,8 @@ class Constructor(object):
         self.elements += [ElementRaw(raw, id)]
         return self
 
-    def single(self, tag, options = {}, id = None):
-        self.elements += [ElementSingleton(tag, options, id)]
+    def single(self, tag, attributes = {}, id = None):
+        self.elements += [ElementSingleton(tag, attributes, id)]
         return self
     
     def feed(self, *elems):
@@ -64,13 +64,13 @@ class Constructor(object):
             if hasattr(item, 'id') and item.id == id:
                 return item
 
-    def getElementsByOptions(self, options):
+    def getElementsByattributes(self, attributes):
         for item in self.elements:
-            if hasattr(item, 'options'):
-                for opt in options:
-                    if not opt in item.options: continue
-                    if not all([val in item.options[opt]\
-                                for val in options[opt]]): continue
+            if hasattr(item, 'attributes'):
+                for opt in attributes:
+                    if not opt in item.attributes: continue
+                    if not all([val in item.attributes[opt]\
+                                for val in attributes[opt]]): continue
                     yield item
             
     def removeElementById(self, id):
@@ -90,16 +90,16 @@ class Constructor(object):
         for elem in self.elements:
             if isinstance(elem, ElementStart):
                 output += " "*4*tabs + '<%s'%elem.tag
-                for option in elem.options:
-                    output += ' %s = "%s"'%(option,
-                                            ' '.join(elem.options[option]))
+                for attribute in elem.attributes:
+                    output += ' %s = "%s"'%(attribute,
+                                            ' '.join(elem.attributes[attribute]))
                 output += ">\n"
                 tabs += 1
             elif isinstance(elem, ElementSingleton):
                 output += " "*4*tabs + '<%s'%elem.tag
-                for option in elem.options:
-                    output += ' %s = "%s"'%(option,
-                                            ' '.join(elem.options[option]))
+                for attribute in elem.attributes:
+                    output += ' %s = "%s"'%(attribute,
+                                            ' '.join(elem.attributes[attribute]))
                 output += "/>\n"
             elif isinstance(elem, ElementEnd):
                 tabs -= 1
@@ -110,27 +110,3 @@ class Constructor(object):
         return output
 
 o,c,r,s = ElementStart, ElementEnd, ElementRaw, ElementSingleton
-
-C = Constructor()
-
-C.feed(o('html'),
-         o('head'),
-           o('script', {'type': ['text/javascript'], 'src':['script.js']}),
-           c('script'),
-           o('style', {'type': ['text/css'], 'src':['style.css']}),
-           c('style'),
-         c('head'),
-         o('body'),
-           o('div', {'class':['message']}),
-             r('Hello World!!!', 'message'),
-             s('img', {'alt': ['Hello'], 'src':['img.jpeg']}),
-           c('div'),
-           o('div', {'class':['message', 'floater']}, 'contents'), c('div'),
-         c('body'),
-       c('html'))
-
-C.getElementById('message').value = "HTML CONSTRUCTOR!!!"
-C.addAfterId('contents', Constructor().open('div').raw('OOHTML').single('br').close('div'))
-
-print(C.render())
-
