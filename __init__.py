@@ -64,7 +64,7 @@ class Constructor(object):
             if hasattr(item, 'id') and item.id == id:
                 return item
 
-    def getElementsByattributes(self, attributes):
+    def getElementsByAttributes(self, attributes):
         for item in self.elements:
             if hasattr(item, 'attributes'):
                 for opt in attributes:
